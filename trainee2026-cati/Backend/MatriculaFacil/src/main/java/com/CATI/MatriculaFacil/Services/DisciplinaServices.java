@@ -2,7 +2,6 @@ package com.CATI.MatriculaFacil.Services;
 
 import com.CATI.MatriculaFacil.Entities.DisciplinaEntity;
 import com.CATI.MatriculaFacil.Exceptions.CodeFoundException;
-import com.CATI.MatriculaFacil.Exceptions.UserFoundException;
 import com.CATI.MatriculaFacil.Repositories.DisciplinaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
