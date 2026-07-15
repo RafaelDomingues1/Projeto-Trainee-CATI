@@ -7,5 +7,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AlunoRepository extends JpaRepository<AlunoEntity, UUID> {
-     Optional<AlunoRepository> findByEmail(String email);
+     Optional<AlunoEntity> findByEmail(String email);
 }

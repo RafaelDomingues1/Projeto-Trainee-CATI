@@ -7,5 +7,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DisciplinaRepository extends JpaRepository <DisciplinaEntity, UUID> {
-    Optional<DisciplinaRepository> findByCode(String code);
+    Optional<DisciplinaEntity> findByCode(String code);
 }
