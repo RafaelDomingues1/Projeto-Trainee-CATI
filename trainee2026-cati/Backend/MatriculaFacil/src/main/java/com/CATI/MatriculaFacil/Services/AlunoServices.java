@@ -13,6 +13,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.Instant;
+
 
 @Service//informar que é minha camada de serviço
 public class AlunoServices {
@@ -53,11 +56,15 @@ public class AlunoServices {
         //se for igual -> gerar o token
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         var token = JWT.create().withIssuer("aluno")
+                .withExpiresAt(Instant.now().plus(Duration.ofHours(12)))
                 .withSubject(aluno.getId().toString())
                 .sign(algorithm);
                 return token
                 ;
        }
+
+
+
 
 
 
