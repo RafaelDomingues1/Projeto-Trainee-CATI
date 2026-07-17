@@ -17,8 +17,8 @@ public class DisciplinaServices {
             throw new CodeFoundException();
         });
 
-         return this.disciplinaRepository.save(disciplinaEntity); //não quero que uma matéria salva tenha o mesmo código, pode
-                                                            //ter o mesmo nome mas em horario diferente e código diferente
+        return this.disciplinaRepository.save(disciplinaEntity); //não quero que uma matéria salva tenha o mesmo código, pode
+        //ter o mesmo nome mas em horario diferente e código diferente
 
     }
 }
