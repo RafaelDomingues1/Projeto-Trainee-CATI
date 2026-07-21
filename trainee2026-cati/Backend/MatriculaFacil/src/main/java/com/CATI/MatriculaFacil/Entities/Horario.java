@@ -7,15 +7,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.util.UUID;
 
 @Data
-@Entity(name = "horário")
-public class HorarioEntity {
+@Embeddable // essa classe não é uma entidade independente, mas seus dados podem fazer parte de outra entidade
+public class Horario {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
 
     @NotNull(message = "O campo não pode estar em branco") //validação para não ficar em branco
     DayOfWeek diaDaSemana;
@@ -24,8 +20,5 @@ public class HorarioEntity {
     @NotNull (message = "O campo não pode estar em branco") //validação para não ficar em branco
     LocalTime horaFim;
 
-    @ManyToOne
-    @JoinColumn(name = "disciplina_id")
-    private DisciplinaEntity disciplina;
 
 }

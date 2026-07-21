@@ -1,9 +1,8 @@
 package com.CATI.MatriculaFacil.Seed;
 
 import com.CATI.MatriculaFacil.Entities.DisciplinaEntity;
-import com.CATI.MatriculaFacil.Entities.HorarioEntity;
+import com.CATI.MatriculaFacil.Entities.Horario;
 import com.CATI.MatriculaFacil.Repositories.DisciplinaRepository;
-import com.CATI.MatriculaFacil.Repositories.HorarioRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,22 +16,21 @@ import java.util.List;
 @Order(1)
 public class DisciplinaSeed {
 
-    private HorarioEntity criarHorario(
-            DisciplinaEntity disciplina,
+    private Horario criarHorario(
+
             DayOfWeek dia,
             int horaInicio,
             int horaFim) {
 
-        HorarioEntity horario = new HorarioEntity();
+        Horario horario = new Horario();
         horario.setDiaDaSemana(dia);
         horario.setHoraInicio(LocalTime.of(horaInicio, 0));
         horario.setHoraFim(LocalTime.of(horaFim, 0));
-        horario.setDisciplina(disciplina);
 
         return horario;
     }
     @Bean
-    CommandLineRunner iniciarBD(DisciplinaRepository disciplinaRepository, HorarioRepository horarioRepository){
+    CommandLineRunner iniciarBD(DisciplinaRepository disciplinaRepository){
 
         return args -> {
 
@@ -45,8 +43,8 @@ public class DisciplinaSeed {
                 calc1.setVagasDisponiveis(60);
                 calc1.setCode("CAL101");
                 calc1.setHorarios(List.of(
-                        criarHorario(calc1, DayOfWeek.MONDAY, 8, 10),
-                        criarHorario(calc1, DayOfWeek.WEDNESDAY, 8, 10)));
+                        criarHorario(DayOfWeek.MONDAY, 8, 10),
+                        criarHorario(DayOfWeek.WEDNESDAY, 8, 10)));
 
 
                 DisciplinaEntity calc2 = new DisciplinaEntity();
@@ -57,8 +55,8 @@ public class DisciplinaSeed {
                 calc2.setCode("CAL201");
                 calc2.setMateriasObrigatorias(List.of(calc1));
                 calc2.setHorarios(List.of(
-                        criarHorario(calc2, DayOfWeek.TUESDAY, 8, 10),
-                        criarHorario(calc2, DayOfWeek.THURSDAY, 8, 10)));
+                        criarHorario(DayOfWeek.TUESDAY, 8, 10),
+                        criarHorario(DayOfWeek.THURSDAY, 8, 10)));
 
 
                 DisciplinaEntity calc3 = new DisciplinaEntity();
@@ -69,8 +67,8 @@ public class DisciplinaSeed {
                 calc3.setCode("CAL301");
                 calc3.setMateriasObrigatorias(List.of(calc2));
                 calc3.setHorarios(List.of(
-                        criarHorario(calc3, DayOfWeek.TUESDAY, 10, 12),
-                        criarHorario(calc3, DayOfWeek.THURSDAY, 10, 12)));
+                        criarHorario(DayOfWeek.TUESDAY, 10, 12),
+                        criarHorario(DayOfWeek.THURSDAY, 10, 12)));
 
 
                 DisciplinaEntity fis1 = new DisciplinaEntity();
@@ -80,8 +78,8 @@ public class DisciplinaSeed {
                 fis1.setVagasDisponiveis(2);
                 fis1.setCode("FIS101");
                 fis1.setHorarios(List.of(
-                        criarHorario(fis1, DayOfWeek.MONDAY, 8, 10),
-                        criarHorario(fis1, DayOfWeek.WEDNESDAY, 8, 10)));
+                        criarHorario(DayOfWeek.MONDAY, 8, 10),
+                        criarHorario(DayOfWeek.WEDNESDAY, 8, 10)));
 
 
                 DisciplinaEntity fis2 = new DisciplinaEntity();
@@ -92,8 +90,8 @@ public class DisciplinaSeed {
                 fis2.setCode("FIS201");
                 fis2.setMateriasObrigatorias(List.of(fis1));
                 fis2.setHorarios(List.of(
-                        criarHorario(fis2, DayOfWeek.MONDAY, 10, 12),
-                        criarHorario(fis2, DayOfWeek.WEDNESDAY, 10, 12)));
+                        criarHorario(DayOfWeek.MONDAY, 10, 12),
+                        criarHorario(DayOfWeek.WEDNESDAY, 10, 12)));
 
 
                 DisciplinaEntity cap = new DisciplinaEntity();
@@ -103,8 +101,8 @@ public class DisciplinaSeed {
                 cap.setVagasDisponiveis(120);
                 cap.setCode("COMP101");
                 cap.setHorarios(List.of(
-                        criarHorario(cap, DayOfWeek.TUESDAY, 8, 12),
-                        criarHorario(cap, DayOfWeek.THURSDAY, 8, 12)));
+                        criarHorario(DayOfWeek.TUESDAY, 8, 12),
+                        criarHorario(DayOfWeek.THURSDAY, 8, 12)));
 
 
                 DisciplinaEntity algoritmos = new DisciplinaEntity();
@@ -115,8 +113,8 @@ public class DisciplinaSeed {
                 algoritmos.setCode("COMP102");
                 algoritmos.setMateriasObrigatorias(List.of(cap));
                 algoritmos.setHorarios(List.of(
-                        criarHorario(algoritmos, DayOfWeek.MONDAY, 10, 12),
-                        criarHorario(algoritmos, DayOfWeek.WEDNESDAY, 10, 14)));
+                        criarHorario(DayOfWeek.MONDAY, 10, 12),
+                        criarHorario(DayOfWeek.WEDNESDAY, 10, 14)));
 
 
                DisciplinaEntity aed2 = new DisciplinaEntity();
@@ -127,8 +125,8 @@ public class DisciplinaSeed {
                aed2.setCode("COMP201");
                aed2.setMateriasObrigatorias(List.of(algoritmos));
                aed2.setHorarios(List.of(
-                       criarHorario(aed2, DayOfWeek.MONDAY, 14, 16),
-                       criarHorario(aed2, DayOfWeek.WEDNESDAY, 14, 16)));
+                       criarHorario(DayOfWeek.MONDAY, 14, 16),
+                       criarHorario(DayOfWeek.WEDNESDAY, 14, 16)));
 
 
 
