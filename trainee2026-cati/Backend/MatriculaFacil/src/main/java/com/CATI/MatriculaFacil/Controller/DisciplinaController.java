@@ -1,15 +1,14 @@
 package com.CATI.MatriculaFacil.Controller;
 
 
+import com.CATI.MatriculaFacil.DTO.DisciplinaResponseDTO;
 import com.CATI.MatriculaFacil.Entities.DisciplinaEntity;
 import com.CATI.MatriculaFacil.Services.DisciplinaServices;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/disciplina")
@@ -28,6 +27,13 @@ public class DisciplinaController {
         }
 
     }
+
+    @GetMapping("/")
+    public ResponseEntity<List<DisciplinaResponseDTO>> listar(){
+
+        return ResponseEntity.ok(disciplinaServices.listar());
+    }
+
 }
 
 
