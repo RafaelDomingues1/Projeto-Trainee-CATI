@@ -1,12 +1,17 @@
 package com.CATI.MatriculaFacil.Services;
 
+import com.CATI.MatriculaFacil.DTO.DisciplinaResponseDTO;
 import com.CATI.MatriculaFacil.Entities.AlunoEntity;
 import com.CATI.MatriculaFacil.Entities.DisciplinaEntity;
+import com.CATI.MatriculaFacil.Entities.Horario;
+import com.CATI.MatriculaFacil.Enums.StatusDisciplina;
 import com.CATI.MatriculaFacil.Repositories.AlunoRepository;
 import com.CATI.MatriculaFacil.Repositories.DisciplinaRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -65,9 +70,26 @@ public class MatriculaServices {
             );
         }
 
+        for (Horario horarioNovo : disciplina.getHorarios()) {
 
-        //TODO verificar confllito de horário
+            aluno.getDisciplinasMatriculadas().stream().filter(matriculada ->
 
+                            matriculada.getHorarios().stream()
+                                    .anyMatch(horarioAluno ->
+                                            horarioAluno.getDiaDaSemana() == horarioNovo.getDiaDaSemana()
+                                                    &&
+                                                    horarioAluno.getHoraInicio().isBefore(horarioNovo.getHoraFim())
+                                                    &&
+                                                    horarioNovo.getHoraInicio().isBefore(horarioAluno.getHoraFim())
+                                    )
+                    )
+                    .findFirst()
+                    .ifPresent(matriculadaConflito -> {
+                        throw new RuntimeException(
+                                "Conflito entre " + matriculadaConflito.getName() + " e " + disciplina.getName()
+                        );
+                    });
+        }
 
 
 
@@ -82,4 +104,89 @@ public class MatriculaServices {
 
 
     }
+
+
+    public List<DisciplinaResponseDTO> listarMatriculas(UUID alunoId){
+
+        AlunoEntity aluno = alunoRepository.findById(alunoId).
+                orElseThrow( () ->
+                        new RuntimeException("Aluno não encontrado"));
+
+        return aluno.getDisciplinasMatriculadas()
+                .stream()
+                .map(d ->new DisciplinaResponseDTO(
+
+                        d.getName(),
+                        d.getCode(),
+                        d.getCredits(),
+                        d.getVagas(),
+                        d.getVagasDisponiveis(),
+                        d.getHorarios()
+                                .stream()
+                                .map(h -> h.getDiaDaSemana()
+                                        + " "
+                                        + h.getHoraInicio()
+                                        + "-"
+                                        + h.getHoraFim())
+                                .toList(),
+                        d.getMateriasObrigatorias()
+                                .stream()
+                                .map(DisciplinaEntity::getName)
+                                .toList()
+                ))
+                .toList();
+    }
+    @Transactional // se falhar, a transição inteira é revertida
+    public void cancelar (UUID alunoId, UUID disciplinaId) {
+
+        AlunoEntity aluno = alunoRepository.findById(alunoId).
+                orElseThrow( () -> new RuntimeException("Aluno não encontrado"));
+
+                DisciplinaEntity disciplina = disciplinaRepository.findById(disciplinaId).
+        orElseThrow( () -> new RuntimeException("Disciplina não encontrada"));
+
+        if(!aluno.getDisciplinasMatriculadas()
+                .contains(disciplina)) {
+
+            throw new RuntimeException(
+                    "Aluno não está matriculado nessa disciplina"
+            );
+        }
+
+        aluno.getDisciplinasMatriculadas().remove(disciplina);
+
+        disciplina.setVagasDisponiveis(
+                disciplina.getVagasDisponiveis() + 1
+        );
+    }
+
+    public StatusDisciplina calcularStatus(AlunoEntity aluno, DisciplinaEntity disciplina){
+
+        if(aluno.getDisciplinasConcluidas().contains(disciplina)) {
+
+            return StatusDisciplina.CONCLUIDA;
+        }
+
+        if(aluno.getDisciplinasMatriculadas().contains(disciplina)) {
+
+            return StatusDisciplina.INSCRITA;
+        }
+
+        if(aluno.getDisciplinasReprovadas().contains(disciplina)) {
+
+            return StatusDisciplina.REPROVADA;
+        }
+
+        boolean possuiPrerequisitos =   aluno.getDisciplinasConcluidas().containsAll(disciplina.getMateriasObrigatorias());
+
+
+        if(!possuiPrerequisitos) {
+            return StatusDisciplina.INDISPONIVEL;
+        }
+
+        return StatusDisciplina.DISPONIVEL;
+    }
+
 }
+
+
