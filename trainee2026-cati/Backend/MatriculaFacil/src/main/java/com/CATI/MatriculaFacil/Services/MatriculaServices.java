@@ -22,7 +22,7 @@ public class MatriculaServices {
 
     @Autowired
     DisciplinaRepository disciplinaRepository;
-
+    @Transactional
     public void matricular(UUID alunoId, UUID disciplinaId) {
 
         AlunoEntity aluno = alunoRepository.findById(alunoId)
@@ -56,42 +56,20 @@ public class MatriculaServices {
             );
         }
 
-        int totalCredits =0;
+        int totalCredits = calcularCreditosAtuais(aluno);
 
-        for(DisciplinaEntity d : aluno.getDisciplinasMatriculadas()){
-
-            totalCredits += d.getCredits();
-        }
-
-        if(totalCredits + disciplina.getCredits() > 24){
-
+        if (totalCredits + disciplina.getCredits() > 24) {
             throw new RuntimeException(
-                    "Limite de créditos excedido. "
+                    "Limite de créditos excedido."
             );
         }
 
-        for (Horario horarioNovo : disciplina.getHorarios()) {
+        if (possuiConflitoHorario(aluno, disciplina)) {
 
-            aluno.getDisciplinasMatriculadas().stream().filter(matriculada ->
-
-                            matriculada.getHorarios().stream()
-                                    .anyMatch(horarioAluno ->
-                                            horarioAluno.getDiaDaSemana() == horarioNovo.getDiaDaSemana()
-                                                    &&
-                                                    horarioAluno.getHoraInicio().isBefore(horarioNovo.getHoraFim())
-                                                    &&
-                                                    horarioNovo.getHoraInicio().isBefore(horarioAluno.getHoraFim())
-                                    )
-                    )
-                    .findFirst()
-                    .ifPresent(matriculadaConflito -> {
-                        throw new RuntimeException(
-                                "Conflito entre " + matriculadaConflito.getName() + " e " + disciplina.getName()
-                        );
-                    });
+            throw new RuntimeException(
+                    "A disciplina possui conflito de horário com uma matéria já inscrita."
+            );
         }
-
-
 
         aluno.getDisciplinasMatriculadas().add(disciplina);
 
@@ -132,7 +110,8 @@ public class MatriculaServices {
                         d.getMateriasObrigatorias()
                                 .stream()
                                 .map(DisciplinaEntity::getName)
-                                .toList()
+                                .toList(),
+                        calcularStatus(aluno, d)
                 ))
                 .toList();
     }
@@ -160,6 +139,60 @@ public class MatriculaServices {
         );
     }
 
+    private int calcularCreditosAtuais(
+            AlunoEntity aluno) {
+
+        return aluno.getDisciplinasMatriculadas()
+                .stream()
+                .mapToInt(
+                        DisciplinaEntity::getCredits
+                )
+                .sum();
+    }
+
+    private boolean possuiConflitoHorario(
+            AlunoEntity aluno,
+            DisciplinaEntity disciplinaNova) {
+
+        return aluno.getDisciplinasMatriculadas()
+                .stream()
+                .anyMatch(matriculada ->
+
+                        matriculada.getHorarios()
+                                .stream()
+                                .anyMatch(horarioAluno ->
+
+                                        disciplinaNova.getHorarios()
+                                                .stream()
+                                                .anyMatch(horarioNovo ->
+
+                                                        horarioAluno
+                                                                .getDiaDaSemana()
+                                                                == horarioNovo
+                                                                .getDiaDaSemana()
+
+                                                                &&
+
+                                                                horarioAluno
+                                                                        .getHoraInicio()
+                                                                        .isBefore(
+                                                                                horarioNovo
+                                                                                        .getHoraFim()
+                                                                        )
+
+                                                                &&
+
+                                                                horarioNovo
+                                                                        .getHoraInicio()
+                                                                        .isBefore(
+                                                                                horarioAluno
+                                                                                        .getHoraFim()
+                                                                        )
+                                                )
+                                )
+                );
+    }
+
     public StatusDisciplina calcularStatus(AlunoEntity aluno, DisciplinaEntity disciplina){
 
         if(aluno.getDisciplinasConcluidas().contains(disciplina)) {
@@ -183,6 +216,28 @@ public class MatriculaServices {
         if(!possuiPrerequisitos) {
             return StatusDisciplina.INDISPONIVEL;
         }
+
+        if (disciplina.getVagasDisponiveis() <= 0) {
+
+            return StatusDisciplina.INDISPONIVEL;
+        }
+
+        int creditosAtuais =
+                calcularCreditosAtuais(aluno);
+
+        if (creditosAtuais
+                + disciplina.getCredits() > 24) {
+
+            return StatusDisciplina.INDISPONIVEL;
+        }
+
+            if (possuiConflitoHorario(
+                    aluno,
+                    disciplina)) {
+
+                return StatusDisciplina.INDISPONIVEL;
+            }
+
 
         return StatusDisciplina.DISPONIVEL;
     }
