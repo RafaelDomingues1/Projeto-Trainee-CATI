@@ -85,11 +85,18 @@ public class AlunoServices {
                 .stream()
                 .map(DisciplinaEntity::getName)
                 .toList();
+           int creditosAtuais =
+                   aluno.getDisciplinasMatriculadas()
+                           .stream()
+                           .mapToInt(
+                                   DisciplinaEntity::getCredits
+                           )
+                           .sum();
 
         return new PerfilDTO(
                 aluno.getName(),
                 aluno.getEmail(),
-                aluno.getCredits(),
+                creditosAtuais,
                 concluidas,
                 matriculadas
         );

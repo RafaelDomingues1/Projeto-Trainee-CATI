@@ -109,7 +109,7 @@ public class DisciplinaSeed {
                 algoritmos.setName("Algorítmos e Estrutura de Dados");
                 algoritmos.setCredits(6);
                 algoritmos.setVagas(80);
-                algoritmos.setVagasDisponiveis(0);
+                algoritmos.setVagasDisponiveis(20);
                 algoritmos.setCode("COMP102");
                 algoritmos.setMateriasObrigatorias(List.of(cap));
                 algoritmos.setHorarios(List.of(
