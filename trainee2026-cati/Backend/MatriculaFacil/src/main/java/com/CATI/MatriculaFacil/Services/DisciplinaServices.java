@@ -50,6 +50,7 @@ public class DisciplinaServices {
 
         return new DisciplinaResponseDTO(
 
+                disciplina.getId(),
                 disciplina.getName(),
                 disciplina.getCode(),
                 disciplina.getCredits(),
