@@ -9,5 +9,11 @@ export interface Disciplina {
     id : string
     name : string
     code : string
-    credits : number 
+    credits : number
+    vagas: number
+    vagasDisponiveis: number
+    horarios: string[]
+    prerequisitos: string[]
+    status: StatusDisciplina
+
 }
