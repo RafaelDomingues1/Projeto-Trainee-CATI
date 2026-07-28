@@ -7,9 +7,11 @@ interface InputFieldProps {
   rightElement?: ReactNode
   type?: string
   placeholder?: string
+  value?: string
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export default function InputField({ label, icon, rightIcon, rightElement, type = 'text', placeholder }: InputFieldProps) {
+export default function InputField({ label, icon, rightIcon, rightElement, type = 'text', placeholder,value,onChange }: InputFieldProps) {
   const withLeftIcon = Boolean(icon)
 
   const inputClasses = [
@@ -47,6 +49,8 @@ export default function InputField({ label, icon, rightIcon, rightElement, type 
           type={type}
           placeholder={placeholder}
           className={inputClasses}
+          value={value}
+          onChange={onChange}
         />
         {rightIcon && (
           <div className="absolute inset-y-0 right-0 flex items-center pr-4">
