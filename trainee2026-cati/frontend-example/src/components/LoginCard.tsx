@@ -1,16 +1,40 @@
-import { FormEvent } from 'react'
+import { FormEvent,useState } from 'react'
 import { GraduationCapIcon, EmailIcon, LockIcon, ArrowRightIcon } from '../assets/icons'
 import InputField from './InputField'
 import { Page } from '../types'
-
+import { login }from '../services/AuthService.ts'
 interface LoginCardProps {
   onNavigate?: (page: Page) => void
 }
 
 export default function LoginCard({ onNavigate }: LoginCardProps) {
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+
+  const [email, setEmail] = useState('') //o que foi digitado no campo email
+  const [password, setPassword] = useState('') // o que foi digitado no campo senha
+  const [error,setError] = useState('')  // mensagem caso dê erro
+  const [success,setSucess] = useState('') //mensagem caso dê certo
+
+   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    onNavigate?.('dashboard')
+
+       setError('')
+       setSucess('')
+
+     try{
+        const dados = await login(email,password)
+
+         localStorage.setItem('token',dados.token)
+
+         setSucess('Login realizado com sucesso!!')
+
+         setTimeout(() => {
+             onNavigate?.('dashboard')
+         }, 300)
+
+     } catch (error) {
+      console.error('Erro ao fazer login:',error)
+       setError('Email ou senha inválidos')
+     }
   }
 
   return (
@@ -36,6 +60,8 @@ export default function LoginCard({ onNavigate }: LoginCardProps) {
           icon={<EmailIcon />}
           type="email"
           placeholder="seu@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         <InputField
@@ -44,7 +70,41 @@ export default function LoginCard({ onNavigate }: LoginCardProps) {
           type="password"
           placeholder="••••••••"
           rightElement="Esqueceu a senha?"
+          value={password}
+          onChange = {(e => setPassword(e.target.value))}
         />
+
+          {error && (
+              <div className="
+            bg-red-50
+            border
+            border-red-200
+            text-red-700
+            text-sm
+            px-4
+            py-3
+            rounded-lg
+            text-center
+  ">
+                  {error}
+              </div>
+          )}
+
+          {success && (
+              <div className="
+            bg-green-50
+            border
+            border-green-200
+            text-green-700
+            text-sm
+            px-4
+            py-3
+            rounded-lg
+            text-center
+  ">
+                  ✓ {success}
+              </div>
+          )}
 
         <div className="pt-2">
           <button
