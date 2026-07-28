@@ -16,7 +16,7 @@ public class DisciplinaResponseDTO {
     private String code;
     private Integer credits;
     private Integer vagas;
-    private Integer vagasdisponiveis;
+    private Integer vagasDisponiveis;
     private List<String> horarios;
     private List<String> prerequisitos;
     private StatusDisciplina status;

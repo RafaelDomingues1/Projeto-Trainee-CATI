@@ -44,6 +44,8 @@ public class AlunoServices {
         var password = passwordEncoder.encode(alunoEntity.getPassword());
         alunoEntity.setPassword(password);
 
+        alunoEntity.setCredits(0);
+
         return this.alunoRepository.save(alunoEntity);
     }
     public LoginResponseDTO AuthAluno(AuthAlunoDTO authAlunoDTO){

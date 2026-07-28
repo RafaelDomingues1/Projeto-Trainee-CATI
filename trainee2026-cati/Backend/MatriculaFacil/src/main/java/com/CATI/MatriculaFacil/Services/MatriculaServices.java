@@ -3,7 +3,6 @@ package com.CATI.MatriculaFacil.Services;
 import com.CATI.MatriculaFacil.DTO.DisciplinaResponseDTO;
 import com.CATI.MatriculaFacil.Entities.AlunoEntity;
 import com.CATI.MatriculaFacil.Entities.DisciplinaEntity;
-import com.CATI.MatriculaFacil.Entities.Horario;
 import com.CATI.MatriculaFacil.Enums.StatusDisciplina;
 import com.CATI.MatriculaFacil.Repositories.AlunoRepository;
 import com.CATI.MatriculaFacil.Repositories.DisciplinaRepository;
@@ -93,7 +92,7 @@ public class MatriculaServices {
         return aluno.getDisciplinasMatriculadas()
                 .stream()
                 .map(d ->new DisciplinaResponseDTO(
-
+                        d.getId(),
                         d.getName(),
                         d.getCode(),
                         d.getCredits(),
