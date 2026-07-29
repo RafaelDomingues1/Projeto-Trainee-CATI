@@ -7,6 +7,7 @@ import {useEffect, useState} from "react";
 import {Disciplina} from "../types/Disciplina.ts";
 import {listarDisciplinas} from "../services/DisciplinaServices.ts";
 import DisciplinaCard from "../components/DisciplinaCard";
+import CreditProgress from "../components/CreditProgress";
 
 export default function DashboardPage() {
 
@@ -29,6 +30,9 @@ export default function DashboardPage() {
 
         carregaPerfil()
     }, [])
+
+    const creditosMatriculados = disciplinas.filter((disciplinas) => disciplinas.status === 'INSCRITA') //seleciona as matérias com status inscrita
+        .reduce((total,disciplinas) => total + disciplinas.credits,0) //soma os créditos
 
         async function carregarDisciplinas() {
 
@@ -65,6 +69,10 @@ export default function DashboardPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <CatalogHeading semestre={mockUser.semestre} />
+
+          <div className="mt-6">
+              <CreditProgress credits={creditosMatriculados}/>
+          </div>
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 

@@ -26,7 +26,17 @@ export default function DisciplinaCard({disciplina,onMatriculaRealizada}: Discip
         disciplina.vagasDisponiveis ??
         disciplina.vagas ??
         0
+    function formatarHorario(horario: string) {
 
+        return horario
+            .replace('MONDAY', 'Segunda-feira')
+            .replace('TUESDAY', 'Terça-feira')
+            .replace('WEDNESDAY', 'Quarta-feira')
+            .replace('THURSDAY', 'Quinta-feira')
+            .replace('FRIDAY', 'Sexta-feira')
+            .replace('SATURDAY', 'Sábado')
+            .replace('SUNDAY', 'Domingo')
+    }
     return (
         <div className="
       bg-white
@@ -86,6 +96,35 @@ export default function DisciplinaCard({disciplina,onMatriculaRealizada}: Discip
         text-gray-500
       ">
                 {disciplina.credits} Créditos
+            </div>
+
+            {/* Horários */}
+            <div className="mt-3">
+
+    <span className="text-xs font-semibold text-ui-medium">
+        Horários
+    </span>
+
+                <div className="mt-2 flex flex-wrap gap-2">
+
+                    {disciplina.horarios.map((horario) => (
+                        <span
+                            key={horario}
+                            className="
+                    px-2
+                    py-1
+                    rounded-md
+                    bg-ui-bg
+                    text-xs
+                    text-ui-medium
+                "
+                        >
+                {formatarHorario(horario)}
+            </span>
+                    ))}
+
+                </div>
+
             </div>
 
 

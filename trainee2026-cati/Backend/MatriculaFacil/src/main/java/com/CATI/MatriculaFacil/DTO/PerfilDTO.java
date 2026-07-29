@@ -10,9 +10,9 @@ import java.util.List;
 @AllArgsConstructor
 public class PerfilDTO {
 
-    private String nome;
+    private String name;
     private String email;
-    private Integer creditos;
+    private Integer credits;
     private List<String> disciplinasConcluidas;
     private List<String> disciplinasMatriculadas;
 

@@ -13,7 +13,13 @@ api.interceptors.request.use((config) => {
         config.url === '/aluno' ||
         config.url === '/aluno/'
 
-    if (token && !rotaPublica) {
+    if(rotaPublica) {
+
+        delete config.headers.Authorization
+        return config
+    }
+
+    if (token){
         config.headers.Authorization =
             `Bearer ${token}`
     }

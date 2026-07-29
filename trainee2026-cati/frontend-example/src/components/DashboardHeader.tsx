@@ -12,12 +12,21 @@ interface NavLink {
   active: boolean
 }
 
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .filter((_, i, arr) => i === 0 || i === arr.length - 1)
-    .map((n) => n[0].toUpperCase())
-    .join('')
+function getInitials(name?: string) {
+  if (!name) {
+    return ''
+  }
+
+  const nomes = name.trim().split(' ')
+
+  if(nomes.length === 1) {
+    return nomes[0][0].toUpperCase()
+  }
+
+  const primeiraInicial = nomes[0][0]
+  const ultimaInicial = nomes[nomes.length -1][0]
+
+  return (primeiraInicial + ultimaInicial).toUpperCase()
 }
 
 export default function DashboardHeader({ user }: DashboardHeaderProps) {
@@ -63,16 +72,18 @@ export default function DashboardHeader({ user }: DashboardHeaderProps) {
           {/* Right side */}
           <div className="flex items-center gap-3">
 
-            {/* User badge */}
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-brand-accent flex items-center justify-center shrink-0">
-                <span className="text-white text-xs font-semibold leading-none">
-                  {getInitials(user.name)}
+            {/* Usuário */}
+            <div className="flex items-center gap-3">
+              {/* Avatar com as iniciais */}
+              <div className="w-10 h-10 rounded-full bg-brand-accent flex items-center justify-center shrink-0">
+                <span className="text-white text-sm font-semibold leading-none">
+                  {getInitials(user.name) || 'A'}
                 </span>
               </div>
+              {/* Nome e período */}
               <div className="hidden sm:flex flex-col leading-tight">
-                <span className="text-sm font-medium text-ui-dark">{user.name}</span>
-                <span className="text-xs text-ui-muted">{user.periodo}</span>
+                <span className="text-sm font-semibold text-ui-dark">{user.name || 'Aluno'}</span>
+                <span className="text-xs text-ui-muted mt-0.5">{user.periodo}</span>
               </div>
             </div>
 
