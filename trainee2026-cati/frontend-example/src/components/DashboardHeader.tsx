@@ -1,9 +1,14 @@
 import { useState } from 'react'
 import { GraduationCapIcon, MenuIcon } from '../assets/icons'
-import { User,Page } from '../types'
+import { Page } from '../types'
 
+
+interface HeaderUser {
+  name?: string
+  periodo: string
+}
 interface DashboardHeaderProps {
-  user: User
+  user:HeaderUser
   currentPage: Page
   onNavigate: (page:Page) => void
 }
@@ -34,7 +39,7 @@ export default function DashboardHeader({ user,currentPage,onNavigate }: Dashboa
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navLinks: NavLink[] = [
-    { label: 'Catálogo', page: 'dashboard'},{label: 'Minhas matérias', page:'minhasMaterias'}
+    { label: 'Catálogo', page: 'dashboard'},{label: 'Minhas matérias', page:'minhasMaterias'},{label:'Meu perfil',page:'perfil'}
   ]
 
   function navegar(page:Page) {
