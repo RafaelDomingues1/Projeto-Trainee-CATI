@@ -1,15 +1,16 @@
 import { useState } from 'react'
 import { GraduationCapIcon, MenuIcon } from '../assets/icons'
-import { User } from '../types'
+import { User,Page } from '../types'
 
 interface DashboardHeaderProps {
   user: User
+  currentPage: Page
+  onNavigate: (page:Page) => void
 }
 
 interface NavLink {
   label: string
-  href: string
-  active: boolean
+  page: Page
 }
 
 function getInitials(name?: string) {
@@ -29,12 +30,17 @@ function getInitials(name?: string) {
   return (primeiraInicial + ultimaInicial).toUpperCase()
 }
 
-export default function DashboardHeader({ user }: DashboardHeaderProps) {
+export default function DashboardHeader({ user,currentPage,onNavigate }: DashboardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navLinks: NavLink[] = [
-    { label: 'Catálogo', href: '#', active: true },
+    { label: 'Catálogo', page: 'dashboard'},{label: 'Minhas matérias', page:'minhasMaterias'}
   ]
+
+  function navegar(page:Page) {
+    onNavigate(page)
+    setMobileMenuOpen(false)
+  }
 
   return (
     <header className="bg-white border-b border-ui-border sticky top-0 z-10">
@@ -53,20 +59,26 @@ export default function DashboardHeader({ user }: DashboardHeaderProps) {
 
           {/* Nav links — desktop */}
           <nav className="hidden md:flex justify-items-start gap-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
+            {navLinks.map((link) => {
+
+              const estaAtivo = currentPage === link.page
+
+              return(<button
+                  type="button"
+                  key={link.page}
+                  onClick={() =>
+                      navegar(link.page)
+                  }
                 className={[
                   'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                  link.active
+                  estaAtivo
                     ? 'bg-brand-light text-brand-primary'
                     : 'text-ui-medium hover:bg-ui-bg hover:text-ui-dark',
                 ].join(' ')}
               >
                 {link.label}
-              </a>
-            ))}
+                  </button>
+            )})}
           </nav>
 
           {/* Right side */}
@@ -100,20 +112,25 @@ export default function DashboardHeader({ user }: DashboardHeaderProps) {
         {/* Mobile nav */}
         {mobileMenuOpen && (
           <nav className="md:hidden border-t border-ui-border py-2 flex flex-col gap-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
+            {navLinks.map((link) => {
+
+                const estaAtivo = currentPage === link.page
+
+              return(
+                  <button
+                      type="button"
+                      key={link.page}
+                      onClick={() => navegar(link.page)}
                 className={[
                   'px-4 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                  link.active
+                  estaAtivo
                     ? 'bg-brand-light text-brand-primary'
                     : 'text-ui-medium hover:bg-ui-bg',
                 ].join(' ')}
               >
                 {link.label}
-              </a>
-            ))}
+                  </button>
+            )})}
           </nav>
         )}
       </div>

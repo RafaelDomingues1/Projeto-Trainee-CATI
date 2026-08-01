@@ -128,6 +128,26 @@ public class DisciplinaSeed {
                        criarHorario(DayOfWeek.MONDAY, 14, 16),
                        criarHorario(DayOfWeek.WEDNESDAY, 14, 16)));
 
+                DisciplinaEntity semVagas = new DisciplinaEntity();
+                semVagas.setName("Teste sem Vagas");
+                semVagas.setCredits(2);
+                semVagas.setVagas(60);
+                semVagas.setVagasDisponiveis(0);
+                semVagas.setCode("SVtst");
+                semVagas.setHorarios(List.of(
+                        criarHorario(DayOfWeek.MONDAY, 20, 22),
+                        criarHorario(DayOfWeek.WEDNESDAY, 20, 22)));
+
+                DisciplinaEntity muitosCreditos = new DisciplinaEntity();
+                muitosCreditos.setName("Teste muitos Créditos");
+                muitosCreditos.setCredits(16);
+                muitosCreditos.setVagas(60);
+                muitosCreditos.setVagasDisponiveis(40);
+                muitosCreditos.setCode("MCtst");
+                muitosCreditos.setHorarios(List.of(
+                        criarHorario(DayOfWeek.MONDAY, 20, 22),
+                        criarHorario(DayOfWeek.WEDNESDAY, 20, 22)));
+
 
 
                disciplinaRepository.saveAll(List.of(calc1,
@@ -137,7 +157,9 @@ public class DisciplinaSeed {
                        fis2,
                        cap,
                        algoritmos,
-                       aed2));
+                       aed2,
+                       semVagas,
+                       muitosCreditos));
 
 
 
