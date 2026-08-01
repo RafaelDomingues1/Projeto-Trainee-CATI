@@ -12,13 +12,14 @@ import type {Page} from "../types";
 import FeedbackBanner from "../components/FeedbackBanner.tsx";
 import type {FeedbackData} from "../types/FeedbackType.ts";
 import SearchBar from "../components/SearchBar.tsx";
-
+import DisciplinaDetailModal from "../components/DisciplinaDetailModal.tsx";
 
 interface DashboardPageProps {
     onNavigate: (page: Page) => void
 }
 export default function DashboardPage({onNavigate}: DashboardPageProps) {
 
+    const[disciplinaSelecionada,setDisciplinaSelecionada] = useState<Disciplina | null>(null)
     const[busca,setBusca] = useState('')
     const[feedback,setFeedback] = useState<FeedbackData | null>(null)
     const [perfil,setPerfil] = useState<Perfil | null>(null)
@@ -87,10 +88,8 @@ export default function DashboardPage({onNavigate}: DashboardPageProps) {
 
     const usuario = perfil ?
         {
-            ...mockUser,
-            name: perfil.name,
-            email: perfil.email,
-            credits: perfil.credits,
+            name: perfil?.name ?? 'Aluno',
+            periodo: mockUser.periodo
         }: mockUser
 
     return (
@@ -177,15 +176,28 @@ export default function DashboardPage({onNavigate}: DashboardPageProps) {
 
               <DisciplinaCard
               key = {disciplinas.id}
-                disciplina={disciplinas}
+              disciplina={disciplinas}
               onMatriculaRealizada={carregarDisciplinas}
               onFeedback={setFeedback}
+              onVerDetalhes={setDisciplinaSelecionada}
                 />
               ))}
 
     </div>
               )}
       </main>
+
+        {disciplinaSelecionada && (
+
+            <DisciplinaDetailModal
+                disciplina={disciplinaSelecionada}
+                onClose={() =>
+                    setDisciplinaSelecionada(null)
+                }
+            />
+
+        )}
+
 
     </div>
   )

@@ -2,14 +2,16 @@ import type { Disciplina } from '../types/Disciplina'
 import {matricular} from "../services/MatriculaServices"
 import type {FeedbackData} from "../types/FeedbackType.ts"
 import {GetErrorMensage} from "../utils/GetErrorMessage.ts";
+import {formatarHorario} from "../utils/FormatarHorario.ts";
 
 interface DisciplinaCardProps {
     disciplina: Disciplina
     onMatriculaRealizada: () => void | Promise<void>
     onFeedback: (feedback : FeedbackData) => void
+    onVerDetalhes: (disciplina: Disciplina) => void
 }
 
-export default function DisciplinaCard({disciplina,onMatriculaRealizada,onFeedback}: DisciplinaCardProps) {
+export default function DisciplinaCard({disciplina,onMatriculaRealizada,onFeedback,onVerDetalhes}: DisciplinaCardProps) {
 
     async function handleMatricula(){
         try{
@@ -77,17 +79,7 @@ export default function DisciplinaCard({disciplina,onMatriculaRealizada,onFeedba
         disciplina.vagasDisponiveis ??
         disciplina.vagas ??
         0
-    function formatarHorario(horario: string) {
 
-        return horario
-            .replace('MONDAY', 'Segunda-feira')
-            .replace('TUESDAY', 'Terça-feira')
-            .replace('WEDNESDAY', 'Quarta-feira')
-            .replace('THURSDAY', 'Quinta-feira')
-            .replace('FRIDAY', 'Sexta-feira')
-            .replace('SATURDAY', 'Sábado')
-            .replace('SUNDAY', 'Domingo')
-    }
     return (
         <div className="
       bg-white
@@ -217,6 +209,27 @@ export default function DisciplinaCard({disciplina,onMatriculaRealizada,onFeedba
                 )}
 
             </div>
+
+            <button
+                type="button"
+                onClick={() =>
+                    onVerDetalhes(disciplina)
+                }
+                className="
+            w-full
+            border
+            border-brand-primary
+            text-brand-primary
+            text-sm
+            font-medium
+            py-2
+            rounded-lg
+            hover:bg-brand-light
+            transition-colors
+          "
+            >
+                Ver detalhes
+            </button>
 
 
             {/* Status / botão */}
