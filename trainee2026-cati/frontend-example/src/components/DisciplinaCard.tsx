@@ -1,23 +1,74 @@
 import type { Disciplina } from '../types/Disciplina'
-import {matricular} from "../services/MatriculaServices";
+import {matricular} from "../services/MatriculaServices"
+import type {FeedbackData} from "../types/FeedbackType.ts"
+import {GetErrorMensage} from "../utils/GetErrorMessage.ts";
 
 interface DisciplinaCardProps {
     disciplina: Disciplina
-    onMatriculaRealizada: () => void
+    onMatriculaRealizada: () => void | Promise<void>
+    onFeedback: (feedback : FeedbackData) => void
 }
 
-export default function DisciplinaCard({disciplina,onMatriculaRealizada}: DisciplinaCardProps) {
+export default function DisciplinaCard({disciplina,onMatriculaRealizada,onFeedback}: DisciplinaCardProps) {
 
     async function handleMatricula(){
         try{
             await matricular(disciplina.id)
 
-            console.log('Matrícula realizada com sucesso')
+            onFeedback({
+                type: 'success',
+                title: 'Matrícula realizada',
+                message: `Você foi matriculado em ${disciplina.name}`
+            })
 
-            onMatriculaRealizada()
-        } catch (error){
 
-            console.error('Erro ao realizar a matrícula:',error)
+             await onMatriculaRealizada()
+
+        } catch (error: unknown){
+
+            const mensagem = GetErrorMensage(error,'Não foi possível realizar a matrícula.')
+
+            const texto = mensagem.toLowerCase()
+
+            let tipo: FeedbackData['type'] = 'error'
+            let titulo = 'Não foi possível realizar a matrícula'
+
+            if (
+                texto.includes('pre-requisito') ||
+                texto.includes('pre requisito') ||
+                texto.includes('requisito nao concluido') ||
+                texto.includes('materia dependente')
+            ) {
+
+                tipo = 'prerequisite'
+                titulo = 'Pré-requisito não concluído'
+
+            } else if (
+                texto.includes('limite') ||
+                texto.includes('24 creditos') ||
+                texto.includes('creditos excedido') ||
+                texto.includes('ultrapassar 24')
+            ) {
+
+                tipo = 'creditLimit'
+                titulo = 'Limite de créditos atingido'
+
+            } else if (
+                texto.includes('conflito') ||
+                texto.includes('mesmo horario') ||
+                texto.includes('conflito de horario')
+            ) {
+
+                tipo = 'scheduleConflict'
+                titulo = 'Conflito de horário'
+
+            }
+
+            onFeedback({
+                type: tipo,
+                title: titulo,
+                message: mensagem
+            })
         }
     }
 
@@ -192,7 +243,8 @@ export default function DisciplinaCard({disciplina,onMatriculaRealizada}: Discip
             {disciplina.status === 'INDISPONIVEL' && (
 
                 <button
-                    disabled
+                    type="button"
+                    onClick={handleMatricula}
                     className="
             w-full
             bg-gray-200

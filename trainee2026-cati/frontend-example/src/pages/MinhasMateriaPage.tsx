@@ -15,6 +15,9 @@ import {
 import type { Disciplina } from '../types/Disciplina'
 import type { Perfil } from '../types/Perfil'
 import type { Page } from '../types'
+import FeedbackBanner from "../components/FeedbackBanner.tsx";
+import type {FeedbackData} from "../types/FeedbackType.ts";
+import {GetErrorMensage} from "../utils/GetErrorMessage.ts";
 
 interface MinhasMateriaPageProps {
     onNavigate: (page: Page) => void
@@ -29,6 +32,8 @@ export default function MinhasMateriaPage({onNavigate}: MinhasMateriaPageProps) 
     const [carregando, setCarregando] = useState(true)
 
     const [erro, setErro] = useState('')
+
+    const[feedback,setFeedback] = useState<FeedbackData | null>(null)
 
 
     useEffect(() => {
@@ -96,19 +101,17 @@ export default function MinhasMateriaPage({onNavigate}: MinhasMateriaPageProps) 
 
         try {
 
-            await deletarMatricula(
-                disciplinaId
-            )
+            await deletarMatricula(disciplinaId)
 
-            console.log('Matrícula cancelada com sucesso')
+            setFeedback({type: 'success',title: 'Matrícula cancelada', message: 'A disciplina foi removida das suas matérias.'})
 
             await carregarMatriculas()
 
         } catch (error) {
 
-            console.error('Erro ao cancelar matrícula:', error)
+             const mensagem =GetErrorMensage(error,'Não foi possível cancelar matrícula.')
 
-            window.alert('Não foi possível cancelar a matrícula.')
+           setFeedback({type:'error',title:'Erro ao cancelar a matrícula',message:mensagem})
         }
     }
 
@@ -158,6 +161,18 @@ export default function MinhasMateriaPage({onNavigate}: MinhasMateriaPageProps) 
                     </p>
 
                 </div>
+
+                {feedback && (<div className="mb-6">
+
+                        <FeedbackBanner
+                            type={feedback.type}
+                            title={feedback.title}
+                            message={feedback.message}
+                            onClose={() => setFeedback(null)}
+                        />
+
+                    </div>
+                )}
 
 
                 <CreditProgress

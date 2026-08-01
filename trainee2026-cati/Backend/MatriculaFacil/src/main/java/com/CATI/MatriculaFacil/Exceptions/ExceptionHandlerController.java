@@ -18,12 +18,13 @@ public class ExceptionHandlerController {
 
     private MessageSource messageSource; // faz o mapeamento da mensagem
 
-    public ExceptionHandlerController(MessageSource message) { //fazer isso para o spring não colocar isso como nulo
-        this.messageSource = message;
+    public ExceptionHandlerController(MessageSource messageSource) { //fazer isso para o spring não colocar isso como nulo
+        this.messageSource = messageSource;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<ErrorMessageDTO>> handleMethodNotValidException(MethodArgumentNotValidException exception){
+
         List<ErrorMessageDTO> dto = new ArrayList<>();
 
         exception.getBindingResult().getFieldErrors().forEach(err->{ // vai ter acesso a todos os erros que capturar
@@ -36,4 +37,23 @@ public class ExceptionHandlerController {
 
         return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorMessageDTO>
+    handleRuntimeException(
+            RuntimeException exception
+    ) {
+
+        ErrorMessageDTO erro =
+                new ErrorMessageDTO(
+                        exception.getMessage(),
+                        null
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(erro);
+    }
 }
+
+

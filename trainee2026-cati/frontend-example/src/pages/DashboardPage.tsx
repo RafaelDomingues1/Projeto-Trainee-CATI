@@ -9,6 +9,8 @@ import {listarDisciplinas} from "../services/DisciplinaServices.ts";
 import DisciplinaCard from "../components/DisciplinaCard";
 import CreditProgress from "../components/CreditProgress";
 import type {Page} from "../types";
+import FeedbackBanner from "../components/FeedbackBanner.tsx";
+import type {FeedbackData} from "../types/FeedbackType.ts";
 
 
 interface DashboardPageProps {
@@ -16,6 +18,7 @@ interface DashboardPageProps {
 }
 export default function DashboardPage({onNavigate}: DashboardPageProps) {
 
+    const[feedback,setFeedback] = useState<FeedbackData | null>(null)
     const [perfil,setPerfil] = useState<Perfil | null>(null)
     const [disciplinas,setDisciplinas] = useState<Disciplina[]>([]) //disciplina = lista atual, setdisciplinas = altera a lista [] começa vazia
     useEffect(() => {
@@ -74,6 +77,19 @@ export default function DashboardPage({onNavigate}: DashboardPageProps) {
       currentPage={"dashboard"}
       onNavigate={onNavigate}/>
 
+        {feedback && (
+            <div className="mb-6">
+
+                <FeedbackBanner
+                    type={feedback.type}
+                    title={feedback.title}
+                    message={feedback.message}
+                    onClose={() => setFeedback(null)}
+                />
+
+            </div>
+        )}
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <CatalogHeading semestre={mockUser.semestre} />
 
@@ -89,6 +105,7 @@ export default function DashboardPage({onNavigate}: DashboardPageProps) {
               key = {disciplinas.id}
                 disciplina={disciplinas}
               onMatriculaRealizada={carregarDisciplinas}
+              onFeedback={setFeedback}
                 />
               ))}
 
