@@ -11,6 +11,7 @@ import CreditProgress from "../components/CreditProgress";
 import type {Page} from "../types";
 import FeedbackBanner from "../components/FeedbackBanner.tsx";
 import type {FeedbackData} from "../types/FeedbackType.ts";
+import SearchBar from "../components/SearchBar.tsx";
 
 
 interface DashboardPageProps {
@@ -18,6 +19,7 @@ interface DashboardPageProps {
 }
 export default function DashboardPage({onNavigate}: DashboardPageProps) {
 
+    const[busca,setBusca] = useState('')
     const[feedback,setFeedback] = useState<FeedbackData | null>(null)
     const [perfil,setPerfil] = useState<Perfil | null>(null)
     const [disciplinas,setDisciplinas] = useState<Disciplina[]>([]) //disciplina = lista atual, setdisciplinas = altera a lista [] começa vazia
@@ -62,6 +64,26 @@ export default function DashboardPage({onNavigate}: DashboardPageProps) {
         carregarDisciplinas()
     },[])
 
+    function normalizarTexto(texto: string) {
+        return texto
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .trim()
+    }
+
+    const textoBuscado = normalizarTexto(busca)
+
+    const disciplinasFiltradas = disciplinas.filter((disciplina) => {
+
+            const nome = normalizarTexto(disciplina.name)
+
+            const codigo = normalizarTexto(disciplina.code)
+
+            return (nome.includes(textoBuscado) || codigo.includes(textoBuscado)
+            )
+        })
+
 
     const usuario = perfil ?
         {
@@ -94,12 +116,64 @@ export default function DashboardPage({onNavigate}: DashboardPageProps) {
         <CatalogHeading semestre={mockUser.semestre} />
 
           <div className="mt-6">
+
+              <SearchBar
+                  value={busca}
+                  onChange={setBusca}
+              />
+
+          </div>
+
+          <div className="mt-6">
               <CreditProgress credits={creditosMatriculados}/>
           </div>
 
+          {disciplinasFiltradas.length === 0 && (
+
+              <div
+                  className="
+      mt-8
+      bg-white
+      border
+      border-ui-border
+      rounded-xl
+      p-8
+      text-center
+    "
+              >
+
+                  <h2 className="font-semibold text-ui-dark">
+                      Nenhuma disciplina encontrada
+                  </h2>
+
+                  <p className="mt-2 text-sm text-ui-muted">
+                      Não encontramos resultados para “{busca}”.
+                  </p>
+
+                  <button
+                      type="button"
+                      onClick={() => setBusca('')}
+                      className="
+                                mt-5
+                                text-sm
+                                font-medium
+                                text-brand-primary
+                                hover:underline
+                              "
+                  >
+                      Limpar pesquisa
+                  </button>
+
+              </div>
+
+          )}
+
+          {disciplinasFiltradas.length > 0 && (
+
+
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            {disciplinas.map((disciplinas) => ( //map percorre a lista
+            {disciplinasFiltradas.map((disciplinas) => ( //map percorre a lista
 
               <DisciplinaCard
               key = {disciplinas.id}
@@ -110,7 +184,7 @@ export default function DashboardPage({onNavigate}: DashboardPageProps) {
               ))}
 
     </div>
-
+              )}
       </main>
 
     </div>
